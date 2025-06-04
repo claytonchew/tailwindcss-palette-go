@@ -1,6 +1,10 @@
-# Tailwind CSS Palette Generator
-
-This command line tool generates a Tailwind CSS-like color palette from a base hex color. Built in pure Go, without external dependencies.
+<p align="center">
+  <img alt="Screenshot" src="https://github.com/claytonchew/tailwindcss-palette-go/blob/main/assets/screenshot.png" height="480" />
+  <h1 align="center">Tailwind CSS Palette Generator</h1>
+  <p align="center">
+    A command line tool that generates TailwindCSS-like color palette from a base hex color.
+  </p>
+</p>
 
 ## Features
 
@@ -26,17 +30,20 @@ go install github.com/claytonchew/tailwindcss-palette-go/cmd/tailwindcss-palette
 ### Option 3: Manual build and install
 
 Clone the repository:
+
 ```bash
 git clone https://github.com/claytonchew/tailwindcss-palette-go.git
 cd tailwindcss-palette-go
 ```
 
 Using Go directly:
+
 ```bash
 go build -o tailwindcss-palette ./cmd/tailwindcss-palette
 ```
 
 Using the Makefile:
+
 ```bash
 # Build for your current platform
 make build
@@ -73,21 +80,25 @@ Where `<hex-color>` can be with or without the `#` prefix.
 ### Examples
 
 Generate a palette in hex format:
+
 ```
 tailwindcss-palette #3b82f6
 ```
 
 Generate a palette in HSL format:
+
 ```
 tailwindcss-palette 3b82f6 -c hsl
 ```
 
 Generate a palette in RGB format:
+
 ```
 tailwindcss-palette 3b82f6 -c rgb
 ```
 
 Export the palette to a JSON file:
+
 ```
 tailwindcss-palette 3b82f6 -o palette.json
 ```
