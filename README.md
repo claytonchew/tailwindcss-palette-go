@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Screenshot" src="https://github.com/claytonchew/tailwindcss-palette-go/blob/main/assets/screenshot.png" height="480" />
+  <img alt="Screenshot" src="https://github.com/claytonchew/tailwindcss-palette-go/blob/main/assets/screenshot.png" width="610" style="max-width: 100%; height: auto;">
   <h1 align="center">Tailwind CSS Palette Generator</h1>
   <p align="center">
     A command line tool that generates TailwindCSS-like color palette from a base hex color.
