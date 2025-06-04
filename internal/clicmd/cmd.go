@@ -28,6 +28,11 @@ const (
 	RGBFormat ColorFormat = "rgb"
 )
 
+const (
+	colorReset = "\033[0m"
+	colorBlock = "    "
+)
+
 var (
 	ErrorInvalidHexInput = errors.New("invalid hex color: must be in format #RRGGBB or #RGB")
 	ErrorInvalidFormat   = errors.New("invalid color format: must be one of 'hex', 'hsl', or 'rgb'")
@@ -37,18 +42,28 @@ func Main() exitCode {
 	flagSet := flag.NewFlagSet("tailwindcss-palette", flag.ExitOnError)
 	colorFormat := flagSet.String("c", string(HexFormat), "Color format: hex, hsl, or rgb")
 	outputFile := flagSet.String("o", "", "Path to output JSON file (optional)")
-	_ = flagSet.Bool("v", false, "Print version information")
+	noColorPtr := flagSet.Bool("no-color", false, "Disable colored output")
+	_ = flagSet.Bool("v", false, "Print version information and exit")
 
 	flagSet.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: tailwindcss-palette <hex-color> [-c format] [-o output-file]\n\n")
+		fmt.Fprintf(os.Stderr, "Usage: tailwindcss-palette <hex-color> [options]\n\n")
 		fmt.Fprintf(os.Stderr, "Arguments:\n")
 		fmt.Fprintf(os.Stderr, "  <hex-color>    Hex color code (e.g. #FF5733 or FF5733)\n\n")
 		fmt.Fprintf(os.Stderr, "Options:\n")
+		fmt.Fprintf(os.Stderr, "  -h, --help     Show this help message\n")
+		fmt.Fprintf(os.Stderr, "  -v, --version  Print version information and exit\n")
 		flagSet.PrintDefaults()
+		fmt.Fprintf(os.Stderr, "\nExamples:\n")
+		fmt.Fprintf(os.Stderr, "  tailwindcss-palette #3B82F6                   # Generate palette in hex format\n")
+		fmt.Fprintf(os.Stderr, "  tailwindcss-palette #3B82F6 -c rgb            # Generate palette in RGB format\n")
+		fmt.Fprintf(os.Stderr, "  tailwindcss-palette #3B82F6 -o palette.json   # Export to JSON file\n")
 	}
 
-	// Special case for version flag
 	for _, arg := range os.Args[1:] {
+		if arg == "-h" || arg == "--help" {
+			flagSet.Usage()
+			return exitOK
+		}
 		if arg == "-v" || arg == "--version" {
 			fmt.Println("tailwindcss-palette version", version.Info())
 			return exitOK
@@ -95,23 +110,40 @@ func Main() exitCode {
 		return exitOK
 	}
 
+	useColor := !*noColorPtr && isTerminal()
+
 	baseHex := hexColor
-	fmt.Printf("Base color: %s\n", baseHex)
+	if useColor {
+		colorBlock := getColorBlock(baseHex)
+		fmt.Printf("Base color: %s %s\n", baseHex, colorBlock)
+	} else {
+		fmt.Printf("Base color: %s\n", baseHex)
+	}
 
 	h, s, l, _ := color.HexToHSL(baseHex)
 	r, g, b, _ := color.HexToRGB(baseHex)
 
 	switch format {
 	case HSLFormat:
-		fmt.Printf("HSL: hsl(%.0f, %.0f%%, %.0f%%)\n", h, s*100, l*100)
+		fmt.Printf("HSL: hsl(%3.0f, %3.0f%%, %3.0f%%)", h, s*100, l*100)
+		if useColor {
+			fmt.Printf(" %s\n", getColorBlock(baseHex))
+		} else {
+			fmt.Println()
+		}
 	case RGBFormat:
-		fmt.Printf("RGB: rgb(%d, %d, %d)\n", r, g, b)
+		fmt.Printf("RGB: rgb(%3d, %3d, %3d)", r, g, b)
+		if useColor {
+			fmt.Printf(" %s\n", getColorBlock(baseHex))
+		} else {
+			fmt.Println()
+		}
 	}
 
 	fmt.Println("\nTailwind CSS palette:")
 	fmt.Println("---------------------")
 
-	if err := outputPalette(palette, format); err != nil {
+	if err := outputPalette(palette, format, useColor); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		return exitError
 	}
@@ -119,7 +151,7 @@ func Main() exitCode {
 	return exitOK
 }
 
-func outputPalette(palette map[string]string, format ColorFormat) error {
+func outputPalette(palette map[string]string, format ColorFormat, useColor bool) error {
 	keys := []string{"50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"}
 
 	for _, key := range keys {
@@ -130,23 +162,56 @@ func outputPalette(palette map[string]string, format ColorFormat) error {
 
 		switch format {
 		case HexFormat:
-			fmt.Printf("  %-4s: %s\n", key, hexValue)
+			fmt.Printf("  %-4s: %-9s", key, hexValue)
+			if useColor {
+				fmt.Printf(" %s\n", getColorBlock(hexValue))
+			} else {
+				fmt.Println()
+			}
 		case HSLFormat:
 			h, s, l, err := color.HexToHSL(hexValue)
 			if err != nil {
 				return err
 			}
-			fmt.Printf("  %-4s: hsl(%.0f, %.0f%%, %.0f%%)\n", key, h, s*100, l*100)
+			hslString := fmt.Sprintf("hsl(%3.0f, %3.0f%%, %3.0f%%)", h, s*100, l*100)
+			fmt.Printf("  %-4s: %-25s", key, hslString)
+			if useColor {
+				fmt.Printf(" %s\n", getColorBlock(hexValue))
+			} else {
+				fmt.Println()
+			}
 		case RGBFormat:
 			r, g, b, err := color.HexToRGB(hexValue)
 			if err != nil {
 				return err
 			}
-			fmt.Printf("  %-4s: rgb(%3d, %3d, %3d)\n", key, r, g, b)
+			rgbString := fmt.Sprintf("rgb(%3d, %3d, %3d)", r, g, b)
+			fmt.Printf("  %-4s: %-20s", key, rgbString)
+			if useColor {
+				fmt.Printf(" %s\n", getColorBlock(hexValue))
+			} else {
+				fmt.Println()
+			}
 		}
 	}
 
 	return nil
+}
+
+func isTerminal() bool {
+	fileInfo, err := os.Stdout.Stat()
+	if err != nil {
+		return false
+	}
+	return (fileInfo.Mode() & os.ModeCharDevice) != 0
+}
+
+func getColorBlock(hex string) string {
+	r, g, b, err := color.HexToRGB(hex)
+	if err != nil {
+		return colorBlock + colorReset
+	}
+	return fmt.Sprintf("\033[48;2;%d;%d;%dm%s%s", r, g, b, colorBlock, colorReset)
 }
 
 func writeToJSONFile(palette map[string]string, baseColor string, filePath string) error {

@@ -7,6 +7,7 @@ This command line tool generates a Tailwind CSS-like color palette from a base h
 - Generate a full Tailwind CSS palette from any hex color
 - Output in various formats (hex, HSL, RGB)
 - Export palette to JSON file
+- Terminal color visualization with colored blocks
 
 ## Installation
 
@@ -67,6 +68,7 @@ Where `<hex-color>` can be with or without the `#` prefix.
   - Available formats: "hex", "hsl", "rgb"
 - `-o`: Path to output JSON file (optional)
   - When specified, the palette will be saved as JSON
+- `--no-color`: Disable colored output in the terminal
 
 ### Examples
 
@@ -97,21 +99,21 @@ tailwindcss-palette 3b82f6 -o palette.json
 ```
 $ tailwindcss-palette #3B82F6
 
-Base color: #3B82F6
+Base color: #3B82F6 ████
 
 Tailwind CSS palette:
 ---------------------
-  50  : #F5F8FE
-  100 : #E6EFFD
-  200 : #CEDFFC
-  300 : #A7C7FA
-  400 : #4F8FF6
-  500 : #0A5BE0
-  600 : #0741A0
-  700 : #052F74
-  800 : #031B44
-  900 : #010D22
-  950 : #000713
+  50  : #F5F8FE ████
+  100 : #E6EFFD ████
+  200 : #CEDFFC ████
+  300 : #A7C7FA ████
+  400 : #4F8FF6 ████
+  500 : #0A5BE0 ████
+  600 : #0741A0 ████
+  700 : #052F74 ████
+  800 : #031B44 ████
+  900 : #010D22 ████
+  950 : #000713 ████
 ```
 
 ### HSL Format
@@ -124,17 +126,17 @@ HSL: hsl(217, 91%, 60%)
 
 Tailwind CSS palette:
 ---------------------
-  50  : hsl(220, 82%, 98%)
-  100 : hsl(217, 85%, 95%)
-  200 : hsl(218, 88%, 90%)
-  300 : hsl(217, 89%, 82%)
-  400 : hsl(217, 90%, 64%)
-  500 : hsl(217, 91%, 46%)
-  600 : hsl(217, 92%, 33%)
-  700 : hsl(217, 92%, 24%)
-  800 : hsl(218, 92%, 14%)
-  900 : hsl(218, 94%, 7%)
-  950 : hsl(218, 100%, 4%)
+  50  : hsl(220,  82%,  98%)  ████
+  100 : hsl(217,  85%,  95%)  ████
+  200 : hsl(218,  88%,  90%)  ████
+  300 : hsl(217,  89%,  82%)  ████
+  400 : hsl(217,  90%,  64%)  ████
+  500 : hsl(217,  91%,  46%)  ████
+  600 : hsl(217,  92%,  33%)  ████
+  700 : hsl(217,  92%,  24%)  ████
+  800 : hsl(218,  92%,  14%)  ████
+  900 : hsl(218,  94%,   7%)  ████
+  950 : hsl(218, 100%,   4%)  ████
 ```
 
 ### RGB Format
@@ -147,17 +149,17 @@ RGB: rgb(59, 130, 246)
 
 Tailwind CSS palette:
 ---------------------
-  50  : rgb(245, 248, 254)
-  100 : rgb(230, 239, 253)
-  200 : rgb(206, 223, 252)
-  300 : rgb(167, 199, 250)
-  400 : rgb( 79, 143, 246)
-  500 : rgb( 10,  91, 224)
-  600 : rgb(  7,  65, 160)
-  700 : rgb(  5,  47, 116)
-  800 : rgb(  3,  27,  68)
-  900 : rgb(  1,  13,  34)
-  950 : rgb(  0,   7,  19)
+  50  : rgb(245, 248, 254)  ████
+  100 : rgb(230, 239, 253)  ████
+  200 : rgb(206, 223, 252)  ████
+  300 : rgb(167, 199, 250)  ████
+  400 : rgb( 79, 143, 246)  ████
+  500 : rgb( 10,  91, 224)  ████
+  600 : rgb(  7,  65, 160)  ████
+  700 : rgb(  5,  47, 116)  ████
+  800 : rgb(  3,  27,  68)  ████
+  900 : rgb(  1,  13,  34)  ████
+  950 : rgb(  0,   7,  19)  ████
 ```
 
 ### JSON Output
