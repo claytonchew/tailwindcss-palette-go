@@ -32,7 +32,7 @@ cd tailwindcss-palette-go
 
 Using Go directly:
 ```bash
-go build -o tailwindcss-palette ./cmd/tailwind-palette-go
+go build -o tailwindcss-palette ./cmd/tailwindcss-palette
 ```
 
 Using the Makefile:
